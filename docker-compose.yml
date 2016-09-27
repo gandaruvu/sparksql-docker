@@ -10,6 +10,8 @@ services:
       - CLUSTER_NAME=test
     env_file:
       - ./hadoop-hive.env
+    ports:
+      - "8020:8020"
   datanode:
     image: bde2020/hadoop-datanode:1.0.0-hadoop2.7.1
     container_name: datanode
@@ -17,23 +19,49 @@ services:
       - ./data/datanode:/hadoop/dfs/data
     env_file:
       - ./hadoop-hive.env
-  hive-server:
-    build: .
-    container_name: hive-server
-    env_file:
-      - ./hadoop-hive.env
-    environment:
-      - "HIVE_CORE_CONF_javax_jdo_option_ConnectionURL=jdbc:postgresql://hive-metastore/metastore"
-    links:
-      - "hive-metastore"
-      - "namenode"
-    ports:
-      - "10000:10000"
   hive-metastore:
     build: .
     container_name: hive-metastore
+    volumes:
+     - ./conf/hive-site.xml:/opt/hive/conf/hive-site.xml
     env_file:
       - ./hadoop-hive.env
     command: /opt/hive/bin/hive --service metastore
+    ports:
+      - "9083:9083"
   hive-metastore-postgresql:
     image: bde2020/hive-metastore-postgresql:2.1.0
+  spark-master:
+    image: zzm94/spark-master:latest
+    hostname: spark-master
+    container_name: spark-master
+    volumes:
+      - ./conf/hive-site.xml:/spark/conf/hive-site.xml
+    environment:
+      - "INIT_DAEMON_STEP=setup_spark"
+    links:
+      - "namenode"
+      - "hive-metastore"
+    ports:
+      - "10000:10000"
+      - "7077:7077" 
+   #command: /spark/sbin/start-thriftserver.sh
+  spark-worker:
+    image: zzm94/spark-worker:latest
+    links:
+      - "spark-master"
+    ports:
+      - "8081"
+  cloudera:
+    image: gethue/hue:latest
+    hostname: hue
+    container_name: spark_hue
+    ports:
+     - "8888:8888"
+    #command: ./build/env/bin/hue runserver_plus 0.0.0.0:8888
+    command: tail -f /dev/null
+    volumes:
+      - ./hue.ini:/hue/desktop/conf/hue.ini
+    links:
+     - "spark-master"
+    command: ./build/env/bin/hue runserver_plus 0.0.0.0:8888
