@@ -17,13 +17,14 @@
 --><configuration>
 <property>
     <name>hive.metastore.warehouse.dir</name>
-    <value>hdfs://namenode:8020/user/hive/warehouse</value>
+    <value>hdfs://namenode:8020/hadoop/dfs/data/warehouse</value>
     <description>location of default database for the warehouse</description>
   </property>
 <property><name>hive.metastore.uris</name><value>thrift://hive-metastore:9083</value></property>
-<property><name>datanucleus.autoCreateSchema</name><value>false</value></property>
-<property><name>javax.jdo.option.ConnectionURL</name><value>jdbc:postgresql://hive-metastore-postgresql/metastore</value></property>
-<property><name>javax.jdo.option.ConnectionDriverName</name><value>org.postgresql.Driver</value></property>
+<property><name>datanucleus.autoCreateSchema</name><value>true</value></property>
+<property><name>datanucleus.schema.autoCreateTables</name><value>true</value></property>
+<property><name>javax.jdo.option.ConnectionURL</name><value>jdbc:mysql://10.161.30.212:3306/yqg_hive</value></property>
+<property><name>javax.jdo.option.ConnectionDriverName</name><value>com.mysql.jdbc.Driver</value></property>
 <property><name>javax.jdo.option.ConnectionPassword</name><value>hive</value></property>
 <property><name>javax.jdo.option.ConnectionUserName</name><value>hive</value></property>
 </configuration>

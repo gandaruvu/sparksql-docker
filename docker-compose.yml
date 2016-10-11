@@ -29,8 +29,6 @@ services:
     command: /opt/hive/bin/hive --service metastore
     ports:
       - "9083:9083"
-  hive-metastore-postgresql:
-    image: bde2020/hive-metastore-postgresql:2.1.0
   spark-master:
     image: zzm94/spark-master:latest
     hostname: spark-master
@@ -44,14 +42,15 @@ services:
       - "hive-metastore"
     ports:
       - "10000:10000"
-      - "7077:7077" 
+      - "7077:7077"
+      - "8080:8080" 
    #command: /spark/sbin/start-thriftserver.sh
   spark-worker:
     image: zzm94/spark-worker:latest
     links:
       - "spark-master"
     ports:
-      - "8081"
+      - "8081:8081"
   cloudera:
     image: gethue/hue:latest
     hostname: hue
