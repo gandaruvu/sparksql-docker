@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export SPARK_MASTER_IP=`hostname`
+export SPARK_MASTER_IP=0.0.0.0
 
 . "/spark/sbin/spark-config.sh"
 
