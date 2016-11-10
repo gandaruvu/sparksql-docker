@@ -1,34 +1,6 @@
 version: "2"
 
 services:
-  namenode:
-    image: bde2020/hadoop-namenode:1.0.0-hadoop2.7.1
-    container_name: namenode
-    volumes:
-      - ./data/namenode:/hadoop/dfs/name
-    environment:
-      - CLUSTER_NAME=test
-    env_file:
-      - ./hadoop-hive.env
-    ports:
-      - "8020:8020"
-  datanode:
-    image: bde2020/hadoop-datanode:1.0.0-hadoop2.7.1
-    container_name: datanode
-    volumes:
-      - ./data/datanode:/hadoop/dfs/data
-    env_file:
-      - ./hadoop-hive.env
-  hive-metastore:
-    build: .
-    container_name: hive-metastore
-    volumes:
-     - ./conf/hive-site.xml:/opt/hive/conf/hive-site.xml
-    env_file:
-      - ./hadoop-hive.env
-    command: /opt/hive/bin/hive --service metastore
-    ports:
-      - "9083:9083"
   cloudera:
     image: gethue/hue:latest
     hostname: hue
@@ -37,8 +9,6 @@ services:
      - "8888:8888"
     #command: ./build/env/bin/hue runserver_plus 0.0.0.0:8888
     command: tail -f /dev/null
-    links: 
-      - "namenode"
     volumes:
       - ./hue.ini:/hue/desktop/conf/hue.ini
     command: ./build/env/bin/hue runserver_plus 0.0.0.0:8888
